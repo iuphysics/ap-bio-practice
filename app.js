@@ -118,6 +118,11 @@ function render() {
   $('question-title').textContent = `Question ${q.id}`;
   $('source-note').hidden = !q.note; $('source-note').textContent = q.note || '';
   $('context').hidden = !q.context.length;
+  // Collapsing a previous question's material must never hide the figures
+  // belonging to a different question reached by Next, Jump, or Shuffle.
+  $('context').open = true;
+  $('context-label').textContent = q.contextLabel || 'Shared passage & figures';
+  $('context-source').textContent = q.context.length ? `Source page ${q.contextSourcePage || q.context[0].page} · Included with this question in any order` : '';
   imageList($('context-images'), q.context, 'Shared passage and figures');
   imageList($('prompt'), q.prompt, `Question ${q.id}`);
   $('transcript').open = false;
@@ -141,7 +146,7 @@ function navigate(index) {
 }
 async function init() {
   try {
-    const response = await fetch('./questions.json');
+    const response = await fetch('./questions.json', { cache: 'no-cache' });
     if (!response.ok) throw new Error(`Question bank returned ${response.status}`);
     const data = await response.json(); questions = data.questions;
     byId = new Map(questions.map(q => [q.id, q]));

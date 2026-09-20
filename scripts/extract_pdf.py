@@ -52,8 +52,16 @@ for pi, page in enumerate(source):
             starts.append({'id': int(m[1]), 'p': pi, 'y': b[1] - 3})
 starts.sort(key=lambda s: s['id'])
 assert [s['id'] for s in starts] == list(range(1, 127))
-# Q35's diagram is above its printed number.
-starts[34]['y'] = TOP
+# These shared panels precede the group's first numbered question. The models
+# above Q35 are a raster image: their labels are absent from extracted PDF text.
+# Keep Q35's own Figure 1 in its prompt and attach Models 1–3 to every question
+# in the group. Q20 starts a separate topic and must not inherit Q16's passage.
+SHARED_GROUPS = [
+    {'first':16, 'last':19, 'label':'Starch and cellulose · Figure 1 and Table 1'},
+    {'first':35, 'last':37, 'label':'DNA representations · Models 1, 2, and 3'},
+    {'first':41, 'last':44, 'label':'Protein domains · Figure 1 and Table 1'},
+    {'first':48, 'last':50, 'label':'Eutrophication study · Figure 1'},
+]
 
 def key(item):
     return item['p'], item['y']
@@ -86,11 +94,13 @@ def crops(a, b, prefix, original=False, left=36, right=576):
     return result
 
 shared = {}
-for first, last in [(16,20), (41,44), (48,50)]:
+for group in SHARED_GROUPS:
+    first, last = group['first'], group['last']
     start = starts[first-1]
     images = crops({'p':start['p'], 'y':TOP}, start, f'context-{first}')
+    assert images, f'Missing shared material for questions {first}–{last}'
     for number in range(first,last+1):
-        shared[number] = images
+        shared[number] = {**group, 'images':images, 'sourcePage':start['p']+1}
 
 questions = []
 audit = []
@@ -98,11 +108,15 @@ for ix, start in enumerate(starts):
     number = start['id']
     end = starts[ix+1] if ix+1 < len(starts) else {'p':154, 'y':BOTTOM}
     # Shared passages belong to their following group, not the previous answer.
-    if ix+1 < len(starts) and starts[ix+1]['id'] in (16,41,48):
+    if ix+1 < len(starts) and starts[ix+1]['id'] in [group['first'] for group in SHARED_GROUPS]:
         end = {**end, 'y':TOP}
     section = between(start, end)
     kind = 'mcq' if number <= 95 else 'frq'
-    q = {'id':number, 'type':kind, 'page':start['p']+1, 'context':shared.get(number, [])}
+    group = shared.get(number)
+    q = {'id':number, 'type':kind, 'page':start['p']+1, 'context':group['images'] if group else []}
+    if group:
+        q['contextLabel'] = group['label']
+        q['contextSourcePage'] = group['sourcePage']
     if kind == 'mcq':
         options = [v for v in option_markers if key(start) <= key(v) < key(end)]
         assert ''.join(o['letter'] for o in options) in ('ABCD','ABCDE'), (number,options)
@@ -156,13 +170,12 @@ for ix, start in enumerate(starts):
         q['prompt'] = crops(start, split, f'q{number}-prompt')
         q['rubric'] = crops(split, end, f'q{number}-rubric',original=True)
         audit.append({'id':number,'rubricPage':rubric['p']+1,'rubricY':round(rubric['y'],2),'promptPages':len(q['prompt'])})
-    if number in (36,37):
-        q['note'] = 'The supplied PDF refers to models 1–3 here but does not include those model illustrations.'
     assert q['prompt'], number
     questions.append(q)
 
 data = {'title':'AP Biology Practice', 'source':'FILE_2835.pdf', 'sourcePages':155,
-        'sourceSha256':hashlib.sha256(Path(args.pdf).read_bytes()).hexdigest(), 'questions':questions}
+        'sourceSha256':hashlib.sha256(Path(args.pdf).read_bytes()).hexdigest(),
+        'sharedGroups':SHARED_GROUPS, 'questions':questions}
 (ROOT/'questions.json').write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
 (ROOT/'scripts'/'extraction-audit.json').write_text(json.dumps(audit,indent=2)+'\n')
 print(f'Extracted {len(questions)} questions: 95 MCQs and 31 FRQs. All 95 keys verified against source highlighting.')

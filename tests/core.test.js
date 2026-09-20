@@ -33,13 +33,36 @@ test('all original questions, types, valid keys, and necessary assets are presen
 test('known source answers and shared passages survive extraction', () => {
   const byId = new Map(questions.map(q => [q.id, q]));
   for (const [id, answer] of [[1,'B'],[2,'C'],[3,'D'],[10,'A'],[14,'D'],[23,'C'],[84,'D'],[95,'D']]) assert.equal(byId.get(id).correct, answer);
-  for (const [first,last] of [[16,20],[41,44],[48,50]]) {
+  for (const [first,last] of [[16,19],[35,37],[41,44],[48,50]]) {
     for (let id = first; id <= last; id++) {
       assert.ok(byId.get(id).context.length);
       assert.deepEqual(byId.get(id).context, byId.get(first).context);
     }
   }
   for (const id of [1,9,33,66]) assert.ok(byId.get(id).options.every(o => o.graphical), `Graph options for ${id}`);
+});
+
+test('shuffled questions retain their exact shared source figures', () => {
+  const byId = new Map(questions.map(q => [q.id, q]));
+  const shuffled = shuffle(questions.filter(q => q.type === 'mcq').map(q => q.id), () => .37);
+  for (const id of shuffled) {
+    const q = byId.get(id);
+    const expectedPage = id >= 16 && id <= 19 ? 13 : id >= 35 && id <= 37 ? 25 : id >= 41 && id <= 44 ? 30 : id >= 48 && id <= 50 ? 35 : null;
+    assert.equal(q.context.length > 0, expectedPage !== null, `Context attached to Q${id}`);
+    if (expectedPage) {
+      assert.equal(q.contextSourcePage, expectedPage);
+      assert.equal(q.context[0].page, expectedPage);
+      assert.ok(q.contextLabel);
+    }
+  }
+  for (const id of [35, 36, 37]) {
+    const q = byId.get(id);
+    assert.equal(q.context[0].src, 'assets/questions/context-35-p25.webp');
+    assert.match(q.contextLabel, /Models 1, 2, and 3/);
+    assert.ok(q.context[0].height > 500, 'Full model panel, including its legend');
+    assert.equal(q.note, undefined, 'Do not claim that present source figures are missing');
+  }
+  assert.equal(byId.get(20).context.length, 0, 'CFTR question must not inherit the starch passage');
 });
 
 test('shuffle changes order, preserves every question, and does not mutate input', () => {

@@ -29,7 +29,7 @@ Open **http://localhost:5173**. There are no packages to install, build steps, a
 
 Questions, figures, tables, mathematical notation, and scoring criteria are retained as lossless source crops. Simple prose options also have responsive text; their exact original crops remain available in the enlarged view. Correct-answer green backgrounds, borders, and check marks are removed from question assets before rendering. All 95 correct options are read from the source highlighting and checked against the written keys wherever supplied. The extraction audit is in `scripts/extraction-audit.json`.
 
-The supplied PDF references absent model illustrations in questions 36 and 37; the app notes that source limitation. No missing diagrams or explanations have been invented. Some original scoring guides repeat their criteria; those repeats are preserved.
+Shared source panels are explicitly mapped to questions 16–19, 35–37, 41–44, and 48–50. In particular, the raster-only Models 1–3 on PDF page 25 accompany both questions 36 and 37 from page 26. Shared material opens automatically on each question, including after shuffling. No diagrams or explanations have been invented. Some original scoring guides repeat their criteria; those repeats are preserved.
 
 The answer key is bundled client-side, suitable for self-study rather than secure exams. Answers are hidden in the study interface until a response is made, not protected against inspection of downloaded files.
 
