@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#154e46">
+  <meta name="description" content="Practice 126 AP Biology questions with instant MCQ feedback and original FRQ scoring guides.">
+  <title>Helix · AP Biology practice</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Helix home"><span class="brand-icon" aria-hidden="true">⧖</span> helix<span class="brand-divider"></span><span class="brand-subtitle">AP BIOLOGY</span></a>
+    <span class="saved-status" id="save-status"><span></span> Saved on this device</span>
+  </header>
+  <main>
+    <section class="intro">
+      <div><p class="eyebrow">YOUR PERSONAL STUDY SPACE</p><h1>A little practice.<br>A deeper understanding.</h1><p class="intro-copy">The original questions. Space to think. Feedback when you’re ready.</p></div>
+      <div class="intro-stat"><strong>126</strong><span>questions to explore</span><span class="stat-detail">95 multiple choice · 31 free response</span></div>
+    </section>
+    <section class="workspace" aria-label="Practice workspace">
+      <aside class="sidebar">
+        <p class="eyebrow">PRACTICE MODE</p>
+        <div class="mode-picker" role="group" aria-label="Question type">
+          <button id="mode-mcq" class="mode-button" aria-pressed="true"><span><b>Multiple choice</b><small>Choose an answer, get feedback</small></span><span class="count">95</span></button>
+          <button id="mode-frq" class="mode-button" aria-pressed="false"><span><b>Free response</b><small>Write, then review the rubric</small></span><span class="count">31</span></button>
+        </div>
+        <div class="session-card"><p class="eyebrow">THIS ROUND</p><div class="session-numbers"><strong id="answered-count">0 <span>/ 95</span></strong><span id="completion-label">answered</span></div><progress id="progress" value="0" max="95" aria-label="Round progress"></progress><p id="score-line">Choose an answer to begin.</p></div>
+        <div class="sidebar-controls"><button class="secondary" id="shuffle">⇄ <span>Shuffle questions</span></button><p class="order-label" id="order-label">Original question order</p><label for="jump">Jump to a question</label><select id="jump" aria-label="Jump to a question"></select><button class="text-button" id="restart">Start a fresh round</button></div>
+        <p class="sidebar-note">Take your time. Your answers and drafts stay here when you come back.</p>
+      </aside>
+      <div class="study-area">
+        <div class="question-topline"><span id="position">Loading questions…</span><span class="question-type" id="question-type">MULTIPLE CHOICE</span></div>
+        <article class="question-card" id="question-card" aria-busy="true">
+          <div class="question-heading"><div><p class="eyebrow" id="source-page"></p><h2 id="question-title" tabindex="-1">Let’s begin.</h2></div><button class="text-button" id="enlarge" aria-label="Enlarge original question">Enlarge ↗</button></div>
+          <p class="source-note" id="source-note" hidden></p>
+          <details id="context" class="context" hidden open><summary>Shared passage & figures</summary><div id="context-images" class="document-images"></div></details>
+          <div id="prompt" class="document-images prompt"></div>
+          <details id="transcript" class="transcript"><summary>Read question as text</summary><p class="response-tip">Text transcription for easier reading. Refer to the original above for figures, tables, and notation.</p><div id="transcript-text"></div></details>
+          <div id="mcq-panel"><p class="answer-instruction" id="answer-instruction">Choose one answer. You’ll see feedback after you select it.</p><div id="options" class="options" role="group" aria-label="Answer choices"></div><div id="feedback" class="feedback" role="status" aria-live="polite" hidden></div><details id="explanation" class="explanation" hidden><summary>Why this answer?</summary><div id="explanation-images" class="document-images"></div></details></div>
+          <div id="frq-panel" hidden><label class="response-label" for="response">Your response</label><p class="response-tip">Use part labels (a), (b), etc. For graphs or drawings, work on paper and record your notes here.</p><textarea id="response" rows="9" placeholder="Take a moment to think, then write your response…"></textarea><div class="response-toolbar"><span id="word-count">0 words · saved automatically</span><button class="primary" id="reveal-rubric" disabled>Review scoring guide</button></div><section id="rubric-panel" class="rubric-panel" hidden><h3>Compare with the scoring guide</h3><p>Use the original criteria below to assess your response. Free responses are self-reviewed, not automatically graded.</p><div id="rubric-images" class="document-images"></div><button class="primary" id="mark-reviewed">Mark as reviewed ✓</button></section></div>
+        </article>
+        <nav class="question-navigation" aria-label="Question navigation"><button class="secondary" id="previous">← Previous</button><span id="nav-hint">One question at a time.</span><button class="primary" id="next">Next question →</button></nav>
+      </div>
+    </section>
+    <footer>Made for focused practice.<span>Questions and figures from your supplied AP Biology scoring guide.</span></footer>
+  </main>
+  <dialog id="image-dialog"><div class="dialog-heading"><strong>Original question · enlarged view</strong><button class="secondary" id="close-dialog">Close ✕</button></div><div id="dialog-images" class="document-images"></div></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

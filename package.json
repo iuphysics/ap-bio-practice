@@ -1,0 +1,13 @@
+{
+  "name": "ap-bio-practice",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "AP Biology question practice with instant MCQ feedback and FRQ self-review",
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "test": "node --test tests/*.test.js",
+    "check": "node --check app.js && node --check core.js && node --check scripts/serve.js"
+  },
+  "engines": { "node": ">=20" }
+}
