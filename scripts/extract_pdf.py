@@ -127,13 +127,13 @@ for ix, start in enumerate(starts):
         q['options'] = []
         for oi,o in enumerate(options):
             stop = options[oi+1] if oi+1<len(options) else answer_start
-            imgs = crops({**o,'y':o['y']-1}, {**stop,'y':stop['y']-2}, f'q{number}-{o["letter"]}', left=68, right=552)
+            imgs = crops({**o,'y':o['y']-1}, {**stop,'y':stop['y']-2}, f'q{number}-{o["letter"]}', left=68, right=576)
             # Keep text alternatives for accessibility, with exact image as authority.
             text = ' '.join(img['text'] for img in imgs).strip()
             text = re.sub(r'^\([A-E]\)\s*','',text)
             graphical = not text
             for pi in range(o['p'], stop['p']+1):
-                region = pdf.Rect(90, o['y']-1 if pi==o['p'] else TOP, 552, stop['y']-2 if pi==stop['p'] else BOTTOM)
+                region = pdf.Rect(90, o['y']-1 if pi==o['p'] else TOP, 576, stop['y']-2 if pi==stop['p'] else BOTTOM)
                 if region.is_empty:
                     continue
                 for info in source[pi].get_image_info():
