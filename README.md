@@ -2,6 +2,10 @@
 
 A small, static study app containing the **126 exact questions** from the supplied 155-page AP Biology scoring guide: **95 MCQs and 31 FRQs**.
 
+**Open the app:** https://iuphysics.github.io/ap-bio-practice/
+
+GitHub Pages hosts the app independently of any local server. Changes pushed to `main` are published automatically. The `.nojekyll` file keeps the site as plain static files.
+
 ## Use it
 
 With Node.js 20 or later installed:
@@ -29,7 +33,7 @@ The supplied PDF references absent model illustrations in questions 36 and 37; t
 
 The answer key is bundled client-side, suitable for self-study rather than secure exams. Answers are hidden in the study interface until a response is made, not protected against inspection of downloaded files.
 
-The question material belongs to its respective rights holders. This repository is for personal study, created privately. No license to redistribute the source question bank is granted. The original PDF is not included.
+The question material belongs to its respective rights holders. This app is for personal study. No license to redistribute the source question bank is granted. The original PDF is not included.
 
 ## Development and verification
 
