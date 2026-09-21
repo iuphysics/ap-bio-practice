@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: helix-biology-tutor
+    runtime: node
+    plan: free
+    buildCommand: npm run check
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: HOST
+        value: 0.0.0.0
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: TUTOR_ACCESS_CODE
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-6-astra
+      - key: ALLOWED_ORIGINS
+        value: https://iuphysics.github.io
+      - key: QUESTION_SITE_URL
+        value: https://iuphysics.github.io/ap-bio-practice/
+      - key: TUTOR_REQUESTS_PER_MINUTE
+        value: "10"

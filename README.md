@@ -8,13 +8,29 @@ GitHub Pages hosts the app independently of any local server. Changes pushed to 
 
 ## Use it
 
-With Node.js 20 or later installed:
+With Node.js 22.9 or later installed:
 
 ```sh
 npm start
 ```
 
-Open **http://localhost:5173**. There are no packages to install, build steps, accounts, or API keys. Alternatively, serve this directory with any static HTTP server. Opening `index.html` directly through `file://` does not support the question-bank fetch.
+Open **http://localhost:5173**. Practice needs no packages, build steps, accounts, or API keys. The optional AI tutor requires the backend setup below. Alternatively, serve this directory with any static HTTP server for practice only. Opening `index.html` directly through `file://` does not support the question-bank fetch.
+
+## Question-aware AI tutor
+
+Use **Ask about this question** to open the chat. Each original question has a separate conversation, including after shuffling. On Send, the tutor receives that question's wording, original source images (including shared figures and graphical choices), selected answer or current FRQ draft, and recent chat. Hints are the default; enable **Allow answer explanations** to include the answer key/scoring guide. AI can make mistakes, and hints are not a guaranteed spoiler filter. Conversations and the class access code stay in page memory and reset on reload; requests are sent to your backend and OpenAI with `store: false` (this does not override provider retention policies).
+
+GitHub Pages cannot run a secret-bearing backend. The panel ships disconnected until the owner deploys one:
+
+1. Create a Render Blueprint from this repository using `render.yaml` (or deploy the Node server on another host).
+2. In the host's secret environment settings, set `OPENAI_API_KEY` from an API project with billing enabled, and a strong, separate `TUTOR_ACCESS_CODE` to share only with intended students. Never put the API key in this repository or browser settings.
+3. Set `OPENAI_MODEL` to an image-capable Responses API model available to your project. The supplied default is `gpt-6-astra`. Restrict `ALLOWED_ORIGINS` to the frontend origin and keep `QUESTION_SITE_URL` pointed at the public question assets.
+4. Put the resulting HTTPS backend URL plus `/api/chat` into `tutor-config.json`'s `endpoint`, then commit/push that public configuration. For an individual browser test, enter that URL in **Tutor settings** instead.
+5. Enter the separate class access code in Tutor settings. Test a question with a shared figure before sharing the site.
+
+For local development, copy `.env.example` to `.env`, fill secrets locally, and run `npm start`. `.env` is ignored and the server only serves explicitly allowed public files. Do not paste keys into chat. No production key or backend is included.
+
+The owner pays for API usage. Configure provider usage alerts/limits and monitor billing. The class code, origin checks, 10 requests/minute per server process and two concurrent requests reduce abuse but are not a hard spending cap or individual-user authentication. Limits reset on process restart; do not scale to multiple instances without a shared limiter. Rotate a leaked class code. Free hosting may sleep and delay the first reply.
 
 ## Practice
 

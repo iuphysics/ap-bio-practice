@@ -1,4 +1,5 @@
 import { shuffle, restoreState } from './core.js';
+import { initTutor, syncTutor } from './tutor.js?v=1';
 
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = 'helix-ap-biology-v1';
@@ -76,7 +77,7 @@ function renderMCQ(q) {
     }
     button.addEventListener('click', () => {
       if (state.answers[q.id]) return;
-      state.answers[q.id] = option.letter; save(); renderMCQ(q); updateStats();
+      state.answers[q.id] = option.letter; save(); renderMCQ(q); updateStats(); syncTutor(q, state);
     });
     return button;
   }));
@@ -138,6 +139,7 @@ function render() {
   $('order-label').textContent = s.shuffled ? 'Shuffled question order' : 'Original question order';
   $('question-card').setAttribute('aria-busy', 'false');
   updateStats();
+  syncTutor(q, state);
 }
 function navigate(index) {
   session().index = Math.max(0, Math.min(session().order.length - 1, index)); save(); render();
@@ -171,7 +173,7 @@ async function init() {
       delete state.reviewed[q.id];
       if (!event.target.value.trim()) { delete state.revealed[q.id]; $('rubric-panel').hidden = true; $('rubric-images').replaceChildren(); }
       $('mark-reviewed').disabled = false; $('mark-reviewed').textContent = 'Mark as reviewed ✓';
-      save(); updateDraftControls(q); updateStats();
+      save(); updateDraftControls(q); updateStats(); syncTutor(q, state);
     });
     $('reveal-rubric').addEventListener('click', () => {
       const q = current(); if (!state.drafts[q.id]?.trim()) return;
@@ -189,6 +191,7 @@ async function init() {
     $('close-dialog').addEventListener('click', () => $('image-dialog').close());
     $('image-dialog').addEventListener('click', event => { if (event.target === $('image-dialog')) $('image-dialog').close(); });
     render();
+    initTutor();
   } catch (error) {
     $('position').textContent = 'Unable to load the question bank';
     $('question-title').textContent = 'Let’s get you connected.';

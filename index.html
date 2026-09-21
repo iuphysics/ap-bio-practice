@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#154e46">
   <meta name="description" content="Practice 126 AP Biology questions with instant MCQ feedback and original FRQ scoring guides.">
   <title>Helix · AP Biology practice</title>
-  <link rel="stylesheet" href="styles.css">
-  <script type="module" src="app.js?v=shared-figures-2"></script>
+  <link rel="stylesheet" href="styles.css?v=tutor-1">
+  <script type="module" src="app.js?v=tutor-1"></script>
 </head>
 <body>
   <header class="site-header">
@@ -47,6 +47,23 @@
     <footer>Made for focused practice.<span>Questions and figures from your supplied AP Biology scoring guide.</span></footer>
   </main>
   <dialog id="image-dialog"><div class="dialog-heading"><strong>Original question · enlarged view</strong><button class="secondary" id="close-dialog">Close ✕</button></div><div id="dialog-images" class="document-images"></div></dialog>
+  <button id="tutor-toggle" class="tutor-launch" aria-expanded="false" aria-controls="tutor-panel">✦ Ask about this question</button>
+  <aside id="tutor-panel" class="tutor-panel" aria-label="AI biology tutor" hidden>
+    <div class="tutor-heading"><div><p class="eyebrow">YOUR STUDY COMPANION</p><h2>Ask Helix</h2></div><button id="tutor-close" class="text-button" aria-label="Close tutor">Close ✕</button></div>
+    <div class="tutor-current"><strong id="tutor-question">Current question</strong><p id="tutor-context"></p></div>
+    <div id="tutor-log" class="tutor-log">
+      <div id="tutor-empty" class="tutor-welcome"><h3>Let’s work through it.</h3><p>Ask about a term, a figure, or the reasoning behind an answer. This conversation follows this exact question, even when you shuffle.</p><div class="tutor-starters"><button data-tutor-prompt="Give me a small hint without revealing the answer.">Give me a hint</button><button data-tutor-prompt="Explain the figure or model in this question, including what its labels mean.">Explain the figure</button><button data-tutor-prompt="Explain the main biology concept I need for this question in simple terms.">Explain the concept</button></div></div>
+      <div id="tutor-messages" aria-live="polite" aria-relevant="additions text"></div>
+    </div>
+    <div class="tutor-bottom">
+      <p id="tutor-setup-note" class="tutor-notice" role="status"></p>
+      <div class="tutor-preferences"><label><input id="tutor-allow-answers" type="checkbox"> Allow answer explanations</label><button id="tutor-clear" class="text-button">Clear chat</button></div>
+      <p id="tutor-status" class="tutor-status" role="status"></p>
+      <form id="tutor-form"><label class="sr-only" for="tutor-input">Ask about the current question</label><textarea id="tutor-input" rows="3" maxlength="4000" placeholder="What does this mean? How do I read this figure?"></textarea><div class="tutor-send-row"><span>Enter to send · Shift+Enter for a new line</span><button id="tutor-stop" type="button" class="secondary" hidden>Stop</button><button id="tutor-send" class="primary" disabled>Send ↑</button></div></form>
+      <details id="tutor-settings"><summary>Tutor settings</summary><form id="tutor-settings-form"><label for="tutor-endpoint">Tutor server URL</label><input id="tutor-endpoint" type="url" placeholder="https://your-tutor-server.onrender.com"><label for="tutor-code">Class access code</label><input id="tutor-code" type="password" autocomplete="off" placeholder="Provided by the site owner"><p>This is not an OpenAI API key. The access code stays in memory until you reload.</p><p id="tutor-settings-error" role="alert"></p><button class="secondary">Connect tutor</button></form></details>
+      <p class="tutor-privacy">Messages, this question’s images, and your answer or draft are sent to the AI service when you press Send. Chats last for this page session. AI can make mistakes.</p>
+    </div>
+  </aside>
   <div id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
