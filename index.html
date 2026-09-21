@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#154e46">
   <meta name="description" content="Practice 126 AP Biology questions with instant MCQ feedback and original FRQ scoring guides.">
   <title>Helix · AP Biology practice</title>
-  <link rel="stylesheet" href="styles.css?v=tutor-1">
-  <script type="module" src="app.js?v=tutor-1"></script>
+  <link rel="stylesheet" href="styles.css?v=review-1">
+  <script type="module" src="app.js?v=review-1"></script>
 </head>
 <body>
   <header class="site-header">
@@ -28,12 +28,14 @@
         </div>
         <div class="session-card"><p class="eyebrow">THIS ROUND</p><div class="session-numbers"><strong id="answered-count">0 <span>/ 95</span></strong><span id="completion-label">answered</span></div><progress id="progress" value="0" max="95" aria-label="Round progress"></progress><p id="score-line">Choose an answer to begin.</p></div>
         <div class="sidebar-controls"><button class="secondary" id="shuffle">⇄ <span>Shuffle questions</span></button><p class="order-label" id="order-label">Original question order</p><label for="jump">Jump to a question</label><select id="jump" aria-label="Jump to a question"></select><button class="text-button" id="restart">Start a fresh round</button></div>
-        <p class="sidebar-note">Take your time. Your answers and drafts stay here when you come back.</p>
+        <button class="secondary" id="review-filter" aria-pressed="false" disabled>Review marked (0)</button>
+        <p class="sidebar-note">Take your time. Your answers, drafts, and review marks stay here when you come back.</p>
       </aside>
       <div class="study-area">
         <div class="question-topline"><span id="position">Loading questions…</span><span class="question-type" id="question-type">MULTIPLE CHOICE</span></div>
         <article class="question-card" id="question-card" aria-busy="true">
           <div class="question-heading"><div><p class="eyebrow" id="source-page"></p><h2 id="question-title" tabindex="-1">Let’s begin.</h2></div><button class="text-button" id="enlarge" aria-label="Enlarge original question">Enlarge ↗</button></div>
+          <button class="secondary" id="mark-review" aria-pressed="false">☆ Mark for review</button>
           <p class="source-note" id="source-note" hidden></p>
           <details id="context" class="context" hidden open><summary id="context-label">Shared passage & figures</summary><p id="context-source" class="response-tip"></p><div id="context-images" class="document-images"></div></details>
           <div id="prompt" class="document-images prompt"></div>

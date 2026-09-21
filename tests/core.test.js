@@ -7,6 +7,19 @@ import { freshState, restoreState, shuffle } from '../core.js';
 const root = new URL('../', import.meta.url);
 const { questions } = JSON.parse(readFileSync(new URL('questions.json', root), 'utf8'));
 
+test('review marks restore by original ID across modes and shuffled order', () => {
+  const saved = freshState(questions);
+  assert.deepEqual(saved.flagged, {});
+  saved.flagged = { 36: true, 96: true, 37: 'true', 999: true };
+  saved.sessions.mcq.order = shuffle(saved.sessions.mcq.order);
+  const restored = restoreState(saved, questions);
+  assert.deepEqual(restored.flagged, { 36: true, 96: true });
+  assert.deepEqual(restored.sessions.mcq.order, saved.sessions.mcq.order);
+  assert.deepEqual(restored.reviewed, {});
+  delete saved.flagged;
+  assert.deepEqual(restoreState(saved, questions).flagged, {});
+});
+
 test('all original questions, types, valid keys, and necessary assets are present', () => {
   assert.deepEqual(questions.map(q => q.id), Array.from({ length: 126 }, (_, i) => i + 1));
   assert.equal(questions.filter(q => q.type === 'mcq').length, 95);

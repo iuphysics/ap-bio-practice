@@ -1,9 +1,10 @@
-import { shuffle, restoreState } from './core.js';
+import { shuffle, restoreState } from './core.js?v=review-1';
 import { initTutor, syncTutor } from './tutor.js?v=1';
 
 const $ = id => document.getElementById(id);
 const STORAGE_KEY = 'helix-ap-biology-v1';
 let questions, byId, state, toastTimer;
+let reviewOnly = false;
 
 function save() {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -17,6 +18,12 @@ function toast(message) {
 }
 function session() { return state.sessions[state.mode]; }
 function current() { return byId.get(session().order[session().index]); }
+function visibleOrder() { return session().order.filter(id => !reviewOnly || state.flagged[id]); }
+function step(direction) {
+  const ids = visibleOrder(), index = ids.indexOf(current().id);
+  const id = ids[Math.max(0, Math.min(ids.length - 1, index + direction))];
+  navigate(session().order.indexOf(id));
+}
 function imageList(container, assets, label) {
   container.replaceChildren(...assets.map((asset, i) => {
     const img = document.createElement('img');
@@ -44,10 +51,14 @@ function updateStats() {
     const drafted = pool.filter(q => state.drafts[q.id]?.trim()).length;
     $('score-line').textContent = `${drafted} drafted · ${completed} self-reviewed`;
   }
-  $('jump').replaceChildren(...session().order.map((id, i) => {
+  const marked = pool.filter(q => state.flagged[q.id]).length;
+  $('review-filter').textContent = reviewOnly ? `Show all questions · ${marked} marked` : `Review marked (${marked})`;
+  $('review-filter').disabled = !marked;
+  $('review-filter').setAttribute('aria-pressed', String(reviewOnly));
+  $('jump').replaceChildren(...visibleOrder().map(id => {
     const q = byId.get(id), opt = document.createElement('option');
     const status = q.type === 'mcq' ? (state.answers[id] ? (state.answers[id] === q.correct ? ' · Correct' : ' · Missed') : '') : (state.reviewed[id] ? ' · Reviewed' : state.drafts[id]?.trim() ? ' · Draft' : '');
-    opt.value = String(i); opt.textContent = `Question ${id}${status}`; return opt;
+    opt.value = String(session().order.indexOf(id)); opt.textContent = `Question ${id}${state.flagged[id] ? ' · ★ Marked' : ''}${status}`; return opt;
   }));
   $('jump').value = String(session().index);
 }
@@ -111,9 +122,17 @@ function renderFRQ(q) {
   $('mark-reviewed').textContent = state.reviewed[q.id] ? 'Reviewed ✓' : 'Mark as reviewed ✓';
 }
 function render() {
+  if (reviewOnly && !visibleOrder().length) { reviewOnly = false; toast('No marked questions in this mode. Showing all questions.'); }
+  if (reviewOnly && !state.flagged[current().id]) {
+    session().index = session().order.indexOf(visibleOrder()[0]);
+    save();
+  }
   const q = current(), s = session();
+  const visible = visibleOrder(), position = visible.indexOf(q.id);
+  $('mark-review').textContent = state.flagged[q.id] ? '★ Marked for review' : '☆ Mark for review';
+  $('mark-review').setAttribute('aria-pressed', String(!!state.flagged[q.id]));
   for (const mode of ['mcq', 'frq']) $('mode-' + mode).setAttribute('aria-pressed', String(state.mode === mode));
-  $('position').textContent = `${s.index + 1} of ${s.order.length} in this round`;
+  $('position').textContent = `${position + 1} of ${visible.length} ${reviewOnly ? 'marked for review' : 'in this round'}`;
   $('question-type').textContent = q.type === 'mcq' ? 'MULTIPLE CHOICE' : 'FREE RESPONSE';
   $('source-page').textContent = `AP BIOLOGY · SOURCE PAGE ${q.page}`;
   $('question-title').textContent = `Question ${q.id}`;
@@ -134,8 +153,8 @@ function render() {
   $('explanation-images').replaceChildren(); $('explanation').hidden = true; $('explanation').open = false;
   $('rubric-images').replaceChildren(); $('rubric-panel').hidden = true;
   if (q.type === 'mcq') renderMCQ(q); else renderFRQ(q);
-  $('previous').disabled = s.index === 0; $('next').disabled = s.index === s.order.length - 1;
-  $('next').textContent = s.index === s.order.length - 1 ? 'Last question ✓' : 'Next question →';
+  $('previous').disabled = position === 0; $('next').disabled = position === visible.length - 1;
+  $('next').textContent = position === visible.length - 1 ? 'Last question ✓' : 'Next question →';
   $('order-label').textContent = s.shuffled ? 'Shuffled question order' : 'Original question order';
   $('question-card').setAttribute('aria-busy', 'false');
   updateStats();
@@ -160,8 +179,14 @@ async function init() {
       save(); render(); toast('Questions shuffled. Your answers are kept.');
     });
     $('jump').addEventListener('change', event => navigate(Number(event.target.value)));
-    $('previous').addEventListener('click', () => navigate(session().index - 1));
-    $('next').addEventListener('click', () => navigate(session().index + 1));
+    $('previous').addEventListener('click', () => step(-1));
+    $('next').addEventListener('click', () => step(1));
+    $('mark-review').addEventListener('click', () => {
+      const id = current().id;
+      if (state.flagged[id]) delete state.flagged[id]; else state.flagged[id] = true;
+      render(); save();
+    });
+    $('review-filter').addEventListener('click', () => { reviewOnly = !reviewOnly; render(); save(); });
     $('restart').addEventListener('click', () => {
       if (!confirm(`Start a fresh ${state.mode === 'mcq' ? 'multiple-choice' : 'free-response'} round? This clears this mode’s answers${state.mode === 'frq' ? ' and drafts' : ''}.`)) return;
       for (const id of session().order) for (const field of (state.mode === 'mcq' ? ['answers'] : ['drafts', 'revealed', 'reviewed'])) delete state[field][id];

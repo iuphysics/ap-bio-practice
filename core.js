@@ -10,7 +10,7 @@ export function shuffle(ids, random = Math.random) {
 }
 
 export function freshState(questions) {
-  return { version: 1, mode: 'mcq', answers: {}, drafts: {}, revealed: {}, reviewed: {},
+  return { version: 1, mode: 'mcq', answers: {}, drafts: {}, revealed: {}, reviewed: {}, flagged: {},
     sessions: Object.fromEntries(['mcq', 'frq'].map(mode => [mode, {
       order: questions.filter(q => q.type === mode).map(q => q.id), index: 0, shuffled: false
     }])) };
@@ -21,6 +21,7 @@ export function restoreState(saved, questions) {
   if (!saved || saved.version !== 1) return state;
   if (['mcq', 'frq'].includes(saved.mode)) state.mode = saved.mode;
   for (const q of questions) {
+    if (saved.flagged?.[q.id] === true) state.flagged[q.id] = true;
     if (q.type === 'mcq' && q.options.some(o => o.letter === saved.answers?.[q.id])) state.answers[q.id] = saved.answers[q.id];
     if (q.type === 'frq') {
       if (typeof saved.drafts?.[q.id] === 'string') state.drafts[q.id] = saved.drafts[q.id];

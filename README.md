@@ -36,6 +36,7 @@ The owner pays for API usage. Configure provider usage alerts/limits and monitor
 
 - Switch between multiple-choice and free-response questions.
 - Shuffle question order without losing answers, or jump to an original question number.
+- Mark any MCQ or FRQ for review, then use “Review marked” to navigate only marked questions in that mode. Marks follow original question numbers through shuffling, survive reloads and fresh rounds, and can be toggled off independently of answers or FRQ self-review. Removing the last mark returns to all questions.
 - MCQs start unanswered. Selecting an option reveals correctness, the correct answer, and an optional original explanation. Your first answer is locked for the round.
 - Write FRQ answers, then reveal the original scoring guide and mark your work as self-reviewed. FRQs are not automatically graded. Use paper for requested graphs and drawings.
 - Progress, order, MCQ selections, and FRQ drafts are saved in this browser's local storage. They are not synchronized across devices. “Start a fresh round” clears only the selected mode after confirmation.
